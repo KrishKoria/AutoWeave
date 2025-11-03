@@ -14,16 +14,18 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const registerSchema = z
   .object({
     email: z
       .string()
       .email("Invalid email address, please provide a valid email address."),
-    password: z.string().min(6, "Password must be at least 6 characters long."),
+    password: z.string().min(8, "Password must be at least 8 characters long."),
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters long."),
+      .min(8, "Password must be at least 8 characters long."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -44,7 +46,22 @@ export default function RegisterForm() {
     mode: "onChange",
   });
   const onSubmit = async (data: RegisterFormData) => {
-    console.log("Logging in with data:", data);
+    await authClient.signUp.email(
+      {
+        name: data.email,
+        email: data.email,
+        password: data.password,
+        callbackURL: `/`,
+      },
+      {
+        onSuccess: () => {
+          router.push("/");
+        },
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
   };
   const isPending = form.formState.isSubmitting;
   return (

@@ -14,12 +14,14 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z
     .string()
     .email("Invalid email address, please provide a valid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters long."),
+  password: z.string().min(8, "Password must be at least 8   characters long."),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -35,7 +37,21 @@ export default function LoginForm() {
     },
   });
   const onSubmit = async (data: LoginFormData) => {
-    console.log("Logging in with data:", data);
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+        callbackURL: `/`,
+      },
+      {
+        onSuccess: () => {
+          router.push("/");
+        },
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
   };
   const isPending = form.formState.isSubmitting;
   return (

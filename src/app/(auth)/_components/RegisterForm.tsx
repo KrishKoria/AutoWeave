@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const registerSchema = z
   .object({
@@ -51,7 +51,7 @@ export default function RegisterForm() {
         name: data.email,
         email: data.email,
         password: data.password,
-        callbackURL: `/`,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
@@ -108,7 +108,7 @@ export default function RegisterForm() {
                         id={field.name}
                         aria-invalid={fieldState.invalid}
                         type="email"
-                        className="border rounded-md px-3 py-2"
+                        className="rounded-md border px-3 py-2"
                         placeholder="m@example.com"
                       />
                       {fieldState.invalid && (
@@ -128,7 +128,7 @@ export default function RegisterForm() {
                         {...field}
                         aria-invalid={fieldState.invalid}
                         type="password"
-                        className="border rounded-md px-3 py-2"
+                        className="rounded-md border px-3 py-2"
                         placeholder="********"
                       />
                       {fieldState.invalid && (
@@ -148,7 +148,7 @@ export default function RegisterForm() {
                         {...field}
                         aria-invalid={fieldState.invalid}
                         type="password"
-                        className="border rounded-md px-3 py-2"
+                        className="rounded-md border px-3 py-2"
                         placeholder="********"
                         {...field}
                       />
@@ -166,7 +166,7 @@ export default function RegisterForm() {
                 Already have an account?{" "}
                 <Link
                   href="/login"
-                  className="underline underline-offset-4 text-blue-700"
+                  className="text-blue-700 underline underline-offset-4"
                 >
                   Log In
                 </Link>

@@ -11,6 +11,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -85,6 +86,13 @@ export default function RegisterForm() {
                   type="button"
                   disabled={isPending}
                 >
+                  <Image
+                    src="/icons/github.svg"
+                    alt="GitHub Logo"
+                    width={20}
+                    height={20}
+                    className="inline"
+                  />
                   Continue with Github
                 </Button>
                 <Button
@@ -93,6 +101,13 @@ export default function RegisterForm() {
                   type="button"
                   disabled={isPending}
                 >
+                  <Image
+                    src="/icons/google.svg"
+                    alt="Google Logo"
+                    width={20}
+                    height={20}
+                    className="inline"
+                  />
                   Continue with Google
                 </Button>
               </div>
@@ -166,7 +181,7 @@ export default function RegisterForm() {
                 Already have an account?{" "}
                 <Link
                   href="/login"
-                  className="text-blue-700 underline underline-offset-4"
+                  className="text-primary underline underline-offset-4"
                 >
                   Log In
                 </Link>

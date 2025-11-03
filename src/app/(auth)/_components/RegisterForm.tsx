@@ -64,6 +64,32 @@ export default function RegisterForm() {
       }
     );
   };
+  const handleGithubSignUp = async () => {
+    await authClient.signIn.social(
+      {
+        provider: "github",
+        callbackURL: "/",
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
+  };
+  const handleGoogleSignUp = async () => {
+    await authClient.signIn.social(
+      {
+        provider: "google",
+        callbackURL: "/",
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
+  };
   const isPending = form.formState.isSubmitting;
   return (
     <div className="flex flex-col gap-6">
@@ -85,6 +111,7 @@ export default function RegisterForm() {
                   className="w-full"
                   type="button"
                   disabled={isPending}
+                  onClick={handleGithubSignUp}
                 >
                   <Image
                     src="/icons/github.svg"
@@ -100,6 +127,7 @@ export default function RegisterForm() {
                   className="w-full"
                   type="button"
                   disabled={isPending}
+                  onClick={handleGoogleSignUp}
                 >
                   <Image
                     src="/icons/google.svg"

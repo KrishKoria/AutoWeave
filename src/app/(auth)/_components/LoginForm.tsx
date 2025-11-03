@@ -86,7 +86,6 @@ export default function LoginForm() {
                         type="email"
                         className="border rounded-md px-3 py-2"
                         placeholder="m@example.com"
-                        {...field}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -107,7 +106,6 @@ export default function LoginForm() {
                         type="password"
                         className="border rounded-md px-3 py-2"
                         placeholder="********"
-                        {...field}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />

@@ -56,7 +56,7 @@ export default function RegisterForm() {
         </CardHeader>
         <CardContent>
           <form
-            id="login-form-main"
+            id="register-form-main"
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
@@ -93,7 +93,6 @@ export default function RegisterForm() {
                         type="email"
                         className="border rounded-md px-3 py-2"
                         placeholder="m@example.com"
-                        {...field}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -114,7 +113,6 @@ export default function RegisterForm() {
                         type="password"
                         className="border rounded-md px-3 py-2"
                         placeholder="********"
-                        {...field}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />

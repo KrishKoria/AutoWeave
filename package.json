@@ -19,6 +19,11 @@
     "dev:all": "mprocs"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.41",
+    "@ai-sdk/deepseek": "^1.0.27",
+    "@ai-sdk/google": "^2.0.27",
+    "@ai-sdk/openai": "^2.0.62",
+    "@ai-sdk/react": "^2.0.87",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-separator": "^1.1.7",
@@ -29,6 +34,7 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "@trpc/tanstack-react-query": "^11.7.1",
+    "ai": "^5.0.87",
     "better-auth": "^1.3.34",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

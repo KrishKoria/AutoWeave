@@ -54,6 +54,32 @@ export default function LoginForm() {
       }
     );
   };
+  const handleGithubSignIn = async () => {
+    await authClient.signIn.social(
+      {
+        provider: "github",
+        callbackURL: "/",
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
+  };
+  const handleGoogleSignIn = async () => {
+    await authClient.signIn.social(
+      {
+        provider: "google",
+        callbackURL: "/",
+      },
+      {
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
+      }
+    );
+  };
   const isPending = form.formState.isSubmitting;
   return (
     <div className="flex flex-col gap-6">
@@ -77,6 +103,7 @@ export default function LoginForm() {
                   className="w-full"
                   type="button"
                   disabled={isPending}
+                  onClick={handleGithubSignIn}
                 >
                   <Image
                     src="/icons/github.svg"
@@ -92,6 +119,7 @@ export default function LoginForm() {
                   className="w-full"
                   type="button"
                   disabled={isPending}
+                  onClick={handleGoogleSignIn}
                 >
                   <Image
                     src="/icons/google.svg"

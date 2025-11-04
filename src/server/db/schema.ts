@@ -73,7 +73,9 @@ export const verification = pgTable("verification", {
 });
 
 export const workflows = pgTable("workflows", {
-  id: text("id").primaryKey().default(crypto.randomUUID()),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

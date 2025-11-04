@@ -7,6 +7,15 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import("next").NextConfig} */
 const config = {
   serverExternalPackages: ["import-in-the-middle", "require-in-the-middle"],
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/workflows",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 // export default config;

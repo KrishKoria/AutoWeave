@@ -38,7 +38,7 @@ export const auth = betterAuth({
               slug: "AutoWeave Pro",
             },
           ],
-          successUrl: process.env.POLAR_SUCCESS_URL,
+          successUrl: env.POLAR_SUCCESS_URL,
           authenticatedUsersOnly: true,
         }),
         portal(),

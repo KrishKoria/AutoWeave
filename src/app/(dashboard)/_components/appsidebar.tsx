@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useActiveSubscription } from "../_hooks/use-subscriptions";
 
 const menuItems = [
   {
@@ -50,6 +51,8 @@ const menuItems = [
 export default function AppSidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { subscription, isLoading, hasActiveSubscription } =
+    useActiveSubscription();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -102,21 +105,43 @@ export default function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={"Upgrade to Pro"}
-              className="gap-x-4 h-10 px-4"
-              onClick={() => router.push("/upgrade")}
-            >
-              <StarIcon className="size-4" />
-              <span>Upgrade to Pro</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {!isLoading && (
+            <>
+              {!hasActiveSubscription && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={"Upgrade to Plus"}
+                    className="gap-x-4 h-10 px-4"
+                    onClick={() =>
+                      authClient.checkout({ slug: "AutoWeave Plus" })
+                    }
+                  >
+                    <StarIcon className="size-4" />
+                    <span>Upgrade to Plus</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+              {hasActiveSubscription &&
+                subscription?.productId ===
+                  "0e169001-363a-47f3-97c9-eb633b904557" && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      tooltip={"Upgrade to Pro"}
+                      className="gap-x-4 h-10 px-4"
+                      onClick={() => authClient.customer.portal()}
+                    >
+                      <StarIcon className="size-4" />
+                      <span>Upgrade to Pro</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+            </>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip={"Billing Portal"}
               className="gap-x-4 h-10 px-4"
-              onClick={() => router.push("/billing")}
+              onClick={() => authClient.customer.portal()}
             >
               <CreditCardIcon className="size-4" />
               <span>Billing Portal</span>

@@ -1,6 +1,6 @@
 import {
   createTRPCRouter,
-  preminumProcedure,
+  premiumProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
@@ -9,7 +9,7 @@ import { eq, and } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import { z } from "zod";
 export const workflowsRouter = createTRPCRouter({
-  create: preminumProcedure
+  create: premiumProcedure
     .input(
       z.object({
         description: z.string().optional(),

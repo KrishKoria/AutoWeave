@@ -1,10 +1,12 @@
 "use client";
 
+import { useWorkflowsParams } from "@/app/(dashboard)/_hooks/use-workflows-params";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 
 export const useSuspenseWorkflows = () => {
-  return api.workflows.getMany.useSuspenseQuery();
+  const [params] = useWorkflowsParams();
+  return api.workflows.getMany.useSuspenseQuery(params);
 };
 
 export const useCreateWorkflow = () => {

@@ -1,16 +1,29 @@
 import { requireAuth } from "@/lib/auth-utils";
-import { api } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
 import WorkflowsList, { WorkflowsContainer } from "../../_components/workflows";
 import { Suspense } from "react";
+import type { SearchParams } from "nuqs/server";
+import { workflowsParamsLoader } from "@/lib/params-loader";
 
-export default async function WorkflowsPage() {
+type WorkflowsPageProps = {
+  searchParams: Promise<SearchParams>;
+};
+export default async function WorkflowsPage({
+  searchParams,
+}: WorkflowsPageProps) {
   await requireAuth();
-  void api.workflows.getMany.prefetch();
+  const params = await workflowsParamsLoader(searchParams);
+
+  // Prefetch on the server
+  await api.workflows.getMany.prefetch(params);
+
   return (
-    <WorkflowsContainer>
-      <Suspense fallback={<div>Loading workflows...</div>}>
-        <WorkflowsList />
-      </Suspense>
-    </WorkflowsContainer>
+    <HydrateClient>
+      <WorkflowsContainer>
+        <Suspense fallback={<div>Loading workflows...</div>}>
+          <WorkflowsList />
+        </Suspense>
+      </WorkflowsContainer>
+    </HydrateClient>
   );
 }

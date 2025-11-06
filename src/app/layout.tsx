@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
   title: "AutoWeave",
@@ -39,7 +40,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <NuqsAdapter>{children}</NuqsAdapter>
             <Toaster />
           </ThemeProvider>
         </TRPCReactProvider>

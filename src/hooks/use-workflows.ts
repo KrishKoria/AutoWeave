@@ -21,3 +21,19 @@ export const useCreateWorkflow = () => {
     },
   });
 };
+
+export const useRemoveWorkflow = () => {
+  const utils = api.useUtils();
+  return api.workflows.remove.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Workflow ${data?.name} removed successfully`);
+      void utils.workflows.getMany.invalidate();
+      if (data && "id" in data) {
+        void utils.workflows.getOne.invalidate({ id: data.id });
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to remove Workflow: ${error.message}`);
+    },
+  });
+};

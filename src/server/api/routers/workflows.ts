@@ -6,6 +6,7 @@ import {
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { workflows } from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
 import { eq, and, count, ilike, desc } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import { z } from "zod";
@@ -35,15 +36,20 @@ export const workflowsRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return db
+    .mutation(async ({ ctx, input }) => {
+      const [item] = await db
         .delete(workflows)
         .where(
           and(
             eq(workflows.id, input.id),
             eq(workflows.userId, ctx.auth.user.id)
           )
-        );
+        )
+        .returning();
+      if (!item) {
+        return new TRPCError({ code: "NOT_FOUND" });
+      }
+      return item;
     }),
 
   updateName: protectedProcedure

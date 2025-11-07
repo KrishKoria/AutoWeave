@@ -3,6 +3,7 @@
 
 import { pgTableCreator } from "drizzle-orm/pg-core";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import type { InferSelectModel } from "drizzle-orm";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -87,3 +88,10 @@ export const workflows = pgTable("workflows", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+// Export inferred types for use throughout the application
+export type Workflow = InferSelectModel<typeof workflows>;
+export type User = InferSelectModel<typeof user>;
+export type Session = InferSelectModel<typeof session>;
+export type Account = InferSelectModel<typeof account>;
+export type Verification = InferSelectModel<typeof verification>;

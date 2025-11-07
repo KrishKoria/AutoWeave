@@ -35,15 +35,17 @@ export const workflowsRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return db
+    .mutation(async ({ ctx, input }) => {
+      const [item] = await db
         .delete(workflows)
         .where(
           and(
             eq(workflows.id, input.id),
             eq(workflows.userId, ctx.auth.user.id)
           )
-        );
+        )
+        .returning();
+      return item;
     }),
 
   updateName: protectedProcedure

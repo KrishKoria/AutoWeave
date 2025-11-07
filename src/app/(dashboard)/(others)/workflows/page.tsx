@@ -1,6 +1,9 @@
 import { requireAuth } from "@/lib/auth-utils";
 import { api, HydrateClient } from "@/trpc/server";
-import WorkflowsList, { WorkflowsContainer } from "../../_components/workflows";
+import WorkflowsList, {
+  WorkflowsContainer,
+  WorkflowsLoading,
+} from "../../_components/workflows";
 import { Suspense } from "react";
 import type { SearchParams } from "nuqs/server";
 import { workflowsParamsLoader } from "@/lib/params-loader";
@@ -20,7 +23,7 @@ export default async function WorkflowsPage({
   return (
     <HydrateClient>
       <WorkflowsContainer>
-        <Suspense fallback={<div>Loading workflows...</div>}>
+        <Suspense fallback={<WorkflowsLoading />}>
           <WorkflowsList />
         </Suspense>
       </WorkflowsContainer>

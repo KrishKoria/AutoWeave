@@ -28,7 +28,9 @@ export const useRemoveWorkflow = () => {
     onSuccess: (data) => {
       toast.success(`Workflow ${data?.name} removed successfully`);
       void utils.workflows.getMany.invalidate();
-      void utils.workflows.getOne.invalidate({ id: data!.id });
+      if (data && "id" in data) {
+        void utils.workflows.getOne.invalidate({ id: data.id });
+      }
     },
     onError: (error) => {
       toast.error(`Failed to remove Workflow: ${error.message}`);

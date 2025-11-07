@@ -6,6 +6,7 @@ import {
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { workflows } from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
 import { eq, and, count, ilike, desc } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import { z } from "zod";
@@ -45,6 +46,9 @@ export const workflowsRouter = createTRPCRouter({
           )
         )
         .returning();
+      if (!item) {
+        return new TRPCError({ code: "NOT_FOUND" });
+      }
       return item;
     }),
 

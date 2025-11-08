@@ -17,7 +17,6 @@ export default async function WorkflowsPage({
   await requireAuth();
   const params = await workflowsParamsLoader(searchParams);
 
-  // Prefetch on the server
   await api.workflows.getMany.prefetch(params);
 
   return (

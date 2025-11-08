@@ -3,7 +3,7 @@ import {
   useCreateWorkflow,
   useRemoveWorkflow,
   useSuspenseWorkflows,
-} from "@/hooks/use-workflows";
+} from "@/app/(dashboard)/_hooks/use-workflows";
 import {
   EmptyView,
   EntityContainer,

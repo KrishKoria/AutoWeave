@@ -37,3 +37,23 @@ export const useRemoveWorkflow = () => {
     },
   });
 };
+
+export const useSuspenseWorkflow = (id: string) => {
+  return api.workflows.getOne.useSuspenseQuery({ id });
+};
+
+export const useUpdateWorkflowName = () => {
+  const utils = api.useUtils();
+  return api.workflows.updateName.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Workflow ${data?.name} updated successfully`);
+      void utils.workflows.getMany.invalidate();
+      if (data && "id" in data) {
+        void utils.workflows.getOne.invalidate({ id: data.id });
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to update Workflow: ${error.message}`);
+    },
+  });
+};

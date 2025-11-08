@@ -59,8 +59,8 @@ export const workflowsRouter = createTRPCRouter({
         name: z.string(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return db
+    .mutation(async ({ ctx, input }) => {
+      const [workflow] = await db
         .update(workflows)
         .set({
           name: input.name,
@@ -70,7 +70,12 @@ export const workflowsRouter = createTRPCRouter({
             eq(workflows.id, input.id),
             eq(workflows.userId, ctx.auth.user.id)
           )
-        );
+        )
+        .returning();
+      if (!workflow) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return workflow;
     }),
   getOne: protectedProcedure
     .input(
@@ -88,7 +93,9 @@ export const workflowsRouter = createTRPCRouter({
             eq(workflows.userId, ctx.auth.user.id)
           )
         );
-
+      if (!workflow) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
       return workflow;
     }),
   getMany: protectedProcedure

@@ -1,9 +1,10 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { pgTableCreator } from "drizzle-orm/pg-core";
+import { json, pgEnum, pgTableCreator, unique } from "drizzle-orm/pg-core";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import type { InferSelectModel } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -89,8 +90,107 @@ export const workflows = pgTable("workflows", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+export const nodeTypeEnum = pgEnum("node_type", ["INITIAL"]);
+
+// Export the enum values for use throughout the application
+export const NodeType = {
+  INITIAL: "INITIAL",
+} as const;
+
+export const nodes = pgTable("nodes", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  workflowId: text("workflowId")
+    .notNull()
+    .references(() => workflows.id, { onDelete: "cascade" }),
+  name: text("name"),
+  type: nodeTypeEnum("type").notNull(),
+  position: json("position"),
+  data: json("data").notNull().default({}),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const connections = pgTable(
+  "connections",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    workflowId: text("workflowId")
+      .notNull()
+      .references(() => workflows.id, { onDelete: "cascade" }),
+    fromNodeId: text("fromNodeId")
+      .notNull()
+      .references(() => nodes.id, { onDelete: "cascade" }),
+    toNodeId: text("toNodeId")
+      .notNull()
+      .references(() => nodes.id, { onDelete: "cascade" }),
+    fromOutput: text("fromOutput").notNull().default("main"),
+    toInput: text("toInput").notNull().default("main"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique().on(
+      table.fromNodeId,
+      table.toNodeId,
+      table.fromOutput,
+      table.toInput
+    ),
+  ]
+);
+
+export const workflowsRelations = relations(workflows, ({ many, one }) => ({
+  nodes: many(nodes),
+  connections: many(connections),
+  user: one(user, {
+    fields: [workflows.userId],
+    references: [user.id],
+  }),
+}));
+
+export const nodesRelations = relations(nodes, ({ one, many }) => ({
+  workflow: one(workflows, {
+    fields: [nodes.workflowId],
+    references: [workflows.id],
+  }),
+  connectionsFrom: many(connections, { relationName: "FromNode" }),
+  connectionsTo: many(connections, { relationName: "ToNode" }),
+}));
+
+export const connectionsRelations = relations(connections, ({ one }) => ({
+  workflow: one(workflows, {
+    fields: [connections.workflowId],
+    references: [workflows.id],
+  }),
+  fromNode: one(nodes, {
+    relationName: "FromNode",
+    fields: [connections.fromNodeId],
+    references: [nodes.id],
+  }),
+  toNode: one(nodes, {
+    relationName: "ToNode",
+    fields: [connections.toNodeId],
+    references: [nodes.id],
+  }),
+}));
+
+export const userRelations = relations(user, ({ many }) => ({
+  workflows: many(workflows),
+}));
+
 // Export inferred types for use throughout the application
 export type Workflow = InferSelectModel<typeof workflows>;
+export type Node = InferSelectModel<typeof nodes>;
+export type Connection = InferSelectModel<typeof connections>;
 export type User = InferSelectModel<typeof user>;
 export type Session = InferSelectModel<typeof session>;
 export type Account = InferSelectModel<typeof account>;

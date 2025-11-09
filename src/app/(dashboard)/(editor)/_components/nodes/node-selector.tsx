@@ -120,7 +120,7 @@ export function NodeSelector({
                   }
                 }}
               >
-                <div className="flex items-center gap-6 w-full overflow-hiddent">
+                <div className="flex items-center gap-6 w-full overflow-hidden">
                   {typeof Icon === "string" ? (
                     <Image
                       src={Icon}
@@ -161,7 +161,7 @@ export function NodeSelector({
                   }
                 }}
               >
-                <div className="flex items-center gap-6 w-full overflow-hiddent">
+                <div className="flex items-center gap-6 w-full overflow-hidden ">
                   {typeof Icon === "string" ? (
                     <Image
                       src={Icon}

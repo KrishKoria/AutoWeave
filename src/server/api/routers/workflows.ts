@@ -19,31 +19,30 @@ export const workflowsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Create workflow first
-      const [workflow] = await db
-        .insert(workflows)
-        .values({
-          name: generateSlug(3),
-          description: input.description || null,
-          userId: ctx.auth.user.id,
-        })
-        .returning();
+      return await db.transaction(async (tx) => {
+        const [workflow] = await tx
+          .insert(workflows)
+          .values({
+            name: generateSlug(3),
+            description: input.description || null,
+            userId: ctx.auth.user.id,
+          })
+          .returning();
 
-      if (!workflow) {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-      }
+        if (!workflow) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        }
 
-      // Create initial node for the workflow
-      await db.insert(nodes).values({
-        workflowId: workflow.id,
-        type: "INITIAL",
-        position: { x: 0, y: 0 },
-        name: "INITIAL",
+        await tx.insert(nodes).values({
+          workflowId: workflow.id,
+          type: "INITIAL",
+          position: { x: 0, y: 0 },
+          name: "INITIAL",
+        });
+
+        return workflow;
       });
-
-      return workflow;
     }),
-
   remove: protectedProcedure
     .input(
       z.object({

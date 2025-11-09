@@ -90,11 +90,17 @@ export const workflows = pgTable("workflows", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const nodeTypeEnum = pgEnum("node_type", ["INITIAL"]);
+export const nodeTypeEnum = pgEnum("node_type", [
+  "INITIAL",
+  "MANUAL_TRIGGER",
+  "HTTP_REQUEST",
+]);
 
 // Export the enum values for use throughout the application
 export const NodeType = {
   INITIAL: "INITIAL",
+  MANUAL_TRIGGER: "MANUAL_TRIGGER",
+  HTTP_REQUEST: "HTTP_REQUEST",
 } as const;
 
 export const nodes = pgTable("nodes", {

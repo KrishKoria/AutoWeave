@@ -5,8 +5,9 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { workflows } from "@/server/db/schema";
+import { nodes, workflows } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
+import type { Edge, Node } from "@xyflow/react";
 import { eq, and, count, ilike, desc } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import { z } from "zod";
@@ -18,18 +19,30 @@ export const workflowsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const [workflow] = await db
-        .insert(workflows)
-        .values({
-          name: generateSlug(3),
-          description: input.description || null,
-          userId: ctx.auth.user.id,
-        })
-        .returning();
+      return await db.transaction(async (tx) => {
+        const [workflow] = await tx
+          .insert(workflows)
+          .values({
+            name: generateSlug(3),
+            description: input.description || null,
+            userId: ctx.auth.user.id,
+          })
+          .returning();
 
-      return workflow;
+        if (!workflow) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        }
+
+        await tx.insert(nodes).values({
+          workflowId: workflow.id,
+          type: "INITIAL",
+          position: { x: 0, y: 0 },
+          name: "INITIAL",
+        });
+
+        return workflow;
+      });
     }),
-
   remove: protectedProcedure
     .input(
       z.object({
@@ -84,19 +97,40 @@ export const workflowsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const [workflow] = await db
-        .select()
-        .from(workflows)
-        .where(
-          and(
-            eq(workflows.id, input.id),
-            eq(workflows.userId, ctx.auth.user.id)
-          )
-        );
+      const workflow = await db.query.workflows.findFirst({
+        where: and(
+          eq(workflows.id, input.id),
+          eq(workflows.userId, ctx.auth.user.id)
+        ),
+        with: {
+          nodes: true,
+          connections: true,
+        },
+      });
       if (!workflow) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      return workflow;
+      const nodes: Node[] = workflow.nodes.map((node) => ({
+        id: node.id,
+        type: node.type ?? undefined,
+        position: node.position as { x: number; y: number },
+        data: (node.data as Record<string, unknown>) || {},
+      }));
+
+      const edges: Edge[] = workflow.connections.map((connection) => ({
+        id: connection.id,
+        source: connection.fromNodeId,
+        target: connection.toNodeId,
+        sourceHandle: connection.fromOutput,
+        targetHandle: connection.toInput,
+      }));
+
+      return {
+        id: workflow.id,
+        name: workflow.name,
+        nodes,
+        edges,
+      };
     }),
   getMany: protectedProcedure
     .input(

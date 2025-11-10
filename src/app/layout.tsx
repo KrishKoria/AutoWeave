@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Provider } from "jotai";
 
 export const metadata: Metadata = {
   title: "AutoWeave",
@@ -40,8 +41,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <NuqsAdapter>{children}</NuqsAdapter>
-            <Toaster />
+            <NuqsAdapter>
+              <Provider>
+                {children}
+                <Toaster />
+              </Provider>
+            </NuqsAdapter>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

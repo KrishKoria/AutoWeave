@@ -5,7 +5,12 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { nodes, workflows } from "@/server/db/schema";
+import {
+  connections,
+  nodes,
+  workflows,
+  type NodeType,
+} from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import type { Edge, Node } from "@xyflow/react";
 import { eq, and, count, ilike, desc } from "drizzle-orm";
@@ -189,5 +194,83 @@ export const workflowsRouter = createTRPCRouter({
         hasNextPage,
         hasPreviousPage,
       };
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        nodes: z.array(
+          z.object({
+            id: z.string(),
+            type: z.string().nullish(),
+            position: z.object({ x: z.number(), y: z.number() }),
+            data: z.record(z.string(), z.any().optional()),
+          })
+        ),
+        edges: z.array(
+          z.object({
+            source: z.string(),
+            target: z.string(),
+            sourceHandle: z.string().nullish(),
+            targetHandle: z.string().nullish(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, nodes: nodeTypes, edges } = input;
+      const workflow = await db.query.workflows.findFirst({
+        where: and(
+          eq(workflows.id, input.id),
+          eq(workflows.userId, ctx.auth.user.id)
+        ),
+        with: {
+          nodes: true,
+          connections: true,
+        },
+      });
+      if (!workflow) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return await db.transaction(async (tx) => {
+        // Delete existing nodes (cascade deletes connections)
+        await tx.delete(nodes).where(eq(nodes.workflowId, id));
+
+        // Insert new nodes only if there are any
+        if (nodeTypes.length > 0) {
+          await tx.insert(nodes).values(
+            nodeTypes.map((node) => ({
+              id: node.id,
+              workflowId: id,
+              name: node.type || "unknown",
+              type: node.type as (typeof NodeType)[keyof typeof NodeType],
+              position: node.position,
+              data: node.data || {},
+            }))
+          );
+        }
+
+        // Insert new connections only if there are any
+        if (edges.length > 0) {
+          await tx.insert(connections).values(
+            edges.map((edge) => ({
+              workflowId: id,
+              fromNodeId: edge.source,
+              toNodeId: edge.target,
+              fromOutput: edge.sourceHandle || "main",
+              toInput: edge.targetHandle || "main",
+            }))
+          );
+        }
+
+        await tx
+          .update(workflows)
+          .set({
+            updatedAt: new Date(),
+          })
+          .where(eq(workflows.id, id));
+
+        return workflow;
+      });
     }),
 });

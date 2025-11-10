@@ -57,3 +57,18 @@ export const useUpdateWorkflowName = () => {
     },
   });
 };
+export const useUpdateWorkflow = () => {
+  const utils = api.useUtils();
+  return api.workflows.update.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Workflow ${data?.name} saved successfully`);
+      void utils.workflows.getMany.invalidate();
+      if (data && "id" in data) {
+        void utils.workflows.getOne.invalidate({ id: data.id });
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to save Workflow: ${error.message}`);
+    },
+  });
+};

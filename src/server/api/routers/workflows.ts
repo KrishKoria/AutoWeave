@@ -1,4 +1,5 @@
 import { PAGINATION } from "@/config/constants";
+import { inngest } from "@/inngest/client";
 import {
   createTRPCRouter,
   premiumProcedure,
@@ -17,6 +18,31 @@ import { eq, and, count, ilike, desc } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import { z } from "zod";
 export const workflowsRouter = createTRPCRouter({
+  execute: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const workflow = await db.query.workflows.findFirst({
+        where: and(
+          eq(workflows.id, input.id),
+          eq(workflows.userId, ctx.auth.user.id)
+        ),
+        with: {
+          nodes: true,
+          connections: true,
+        },
+      });
+      await inngest.send({
+        name: "workflows/execute.workflow",
+        data: {
+          workflowId: input.id,
+        },
+      });
+      return workflow;
+    }),
   create: premiumProcedure
     .input(
       z.object({

@@ -72,3 +72,13 @@ export const useUpdateWorkflow = () => {
     },
   });
 };
+export const useExecuteWorkflow = () => {
+  return api.workflows.execute.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Workflow ${data?.name} executed successfully`);
+    },
+    onError: (error) => {
+      toast.error(`Failed to execute Workflow: ${error.message}`);
+    },
+  });
+};

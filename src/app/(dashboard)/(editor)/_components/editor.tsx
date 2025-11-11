@@ -2,7 +2,7 @@
 
 import { LoadingView } from "../../_components/entity-components";
 import { useSuspenseWorkflow } from "../../_hooks/use-workflows";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -23,6 +23,8 @@ import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
 import { useSetAtom } from "jotai";
 import { editorAtom } from "@/store/atoms";
+import { NodeType } from "@/server/db/schema";
+import ExecuteWorkflow from "./execute-workflow";
 
 export const EditorLoading = () => {
   return <LoadingView message="Loading Editor" />;
@@ -49,6 +51,10 @@ export function Editor({ workflowID }: { workflowID: string }) {
       setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     []
   );
+
+  const hasManualTrigger = useMemo(() => {
+    return nodes.some((node) => node.type === NodeType.MANUAL_TRIGGER);
+  }, [nodes]);
   return (
     <div className="size-full">
       <ReactFlow
@@ -72,6 +78,11 @@ export function Editor({ workflowID }: { workflowID: string }) {
         <Panel position="top-right">
           <AddNodeButton />
         </Panel>
+        {hasManualTrigger && (
+          <Panel position="bottom-center">
+            <ExecuteWorkflow workflowID={workflowID} />
+          </Panel>
+        )}
       </ReactFlow>
     </div>
   );

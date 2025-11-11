@@ -39,9 +39,7 @@ interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: z.infer<typeof formSchema>) => void;
-  defaultEndpoint?: string;
-  defaultMethod?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  defaultBody?: string;
+  defaultValues?: Partial<HttpRequestFormValues>;
 }
 
 export type HttpRequestFormValues = z.infer<typeof formSchema>;
@@ -50,27 +48,25 @@ export const HttpRequestDialog = ({
   open,
   onOpenChange,
   onSubmit,
-  defaultEndpoint,
-  defaultMethod,
-  defaultBody,
+  defaultValues = {},
 }: DialogProps) => {
   const form = useForm<HttpRequestFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      endpoint: defaultEndpoint ?? "",
-      body: defaultBody ?? "",
-      method: defaultMethod ?? "GET",
+      endpoint: defaultValues.endpoint || "",
+      body: defaultValues.body || "",
+      method: defaultValues.method || "GET",
     },
   });
   useEffect(() => {
     if (open) {
       form.reset({
-        endpoint: defaultEndpoint ?? "",
-        method: defaultMethod ?? "GET",
-        body: defaultBody ?? "",
+        endpoint: defaultValues.endpoint || "",
+        body: defaultValues.body || "",
+        method: defaultValues.method || "GET",
       });
     }
-  }, [open, defaultEndpoint, defaultMethod, defaultBody, form]);
+  }, [open, defaultValues, form]);
   const watchMethod = form.watch("method");
   const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
   const handleSubmit = (values: z.infer<typeof formSchema>) => {

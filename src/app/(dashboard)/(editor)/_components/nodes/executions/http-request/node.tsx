@@ -7,6 +7,7 @@ import { GlobeIcon } from "lucide-react";
 import { HttpRequestDialog, type HttpRequestFormValues } from "./dialog";
 
 type HttpRequestNodeData = {
+  variable?: string;
   endpoint?: string;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: string;
@@ -20,11 +21,13 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
   const nodeData = props.data;
   const [open, setOpen] = useState(false);
   const { setNodes } = useReactFlow();
+
   const description = nodeData?.endpoint
     ? `${nodeData.method || "GET"} ${nodeData.endpoint}`
     : "Not Configured";
 
   const handleDialogOpen = () => setOpen(true);
+
   const handleSubmit = (values: HttpRequestFormValues) => {
     setNodes((nodes) =>
       nodes.map((node) => {
@@ -41,6 +44,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
       })
     );
   };
+
   return (
     <>
       <HttpRequestDialog

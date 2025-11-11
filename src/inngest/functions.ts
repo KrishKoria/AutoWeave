@@ -15,6 +15,7 @@ export const executeWorkflow = inngest.createFunction(
     if (!workflowId) {
       throw new NonRetriableError("Workflow ID is missing");
     }
+
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await db.query.workflows.findFirst({
         where: eq(workflows.id, workflowId),
@@ -25,11 +26,11 @@ export const executeWorkflow = inngest.createFunction(
       }
       return SortNodes(workflow.nodes, workflow.connections);
     });
+
     let context = event.data.initialData || {};
+
     for (const node of sortedNodes) {
-      const executor = getNodeExecutor(
-        node.type as (typeof NodeType)[keyof typeof NodeType]
-      );
+      const executor = getNodeExecutor(node.type);
       if (!executor) {
         throw new NonRetriableError(
           `No executor found for node type: ${node.type}`
@@ -42,6 +43,7 @@ export const executeWorkflow = inngest.createFunction(
         step,
       });
     }
+
     return {
       workflowId,
       result: context,

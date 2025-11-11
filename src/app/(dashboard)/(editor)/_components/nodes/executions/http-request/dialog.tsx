@@ -33,6 +33,13 @@ const formSchema = z.object({
   endpoint: z.string().url({ message: "Please Enter a valid URL" }),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body: z.string().optional(),
+  variable: z
+    .string()
+    .min(1, { message: "Variable name is required" })
+    .regex(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
+      message:
+        "Variable name must start with a letter or underscore and contain only letters, numbers, and underscores",
+    }),
 });
 
 interface DialogProps {
@@ -56,18 +63,23 @@ export const HttpRequestDialog = ({
       endpoint: defaultValues.endpoint || "",
       body: defaultValues.body || "",
       method: defaultValues.method || "GET",
+      variable: defaultValues.variable || "",
     },
   });
+
   useEffect(() => {
     if (open) {
       form.reset({
+        variable: defaultValues.variable || "",
         endpoint: defaultValues.endpoint || "",
         body: defaultValues.body || "",
         method: defaultValues.method || "GET",
       });
     }
   }, [open, defaultValues, form]);
+
   const watchMethod = form.watch("method");
+  const watchVariable = form.watch("variable") || "myApiCall";
   const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     onSubmit(values);
@@ -86,6 +98,27 @@ export const HttpRequestDialog = ({
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-8 mt-4"
         >
+          <Controller
+            control={form.control}
+            name="variable"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Variable Name</FieldLabel>
+                <Input
+                  {...field}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="myApiCall"
+                />
+                <FieldDescription>
+                  Use this name to reference the variable in subsequent nodes :{" "}
+                  {`{{${watchVariable}.response.data}}`}
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <Controller
             control={form.control}
             name="method"

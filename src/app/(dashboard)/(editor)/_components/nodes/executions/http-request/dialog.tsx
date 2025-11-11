@@ -111,7 +111,7 @@ export const HttpRequestDialog = ({
                 />
                 <FieldDescription>
                   Use this name to reference the variable in subsequent nodes :{" "}
-                  {`{{${watchVariable}.response.data}}`}
+                  {`{{${watchVariable}.httpResponse.body}}`}
                 </FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />

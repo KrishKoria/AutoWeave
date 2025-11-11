@@ -1,5 +1,7 @@
 import type { Connection, Node } from "@/server/db/schema";
 import toposort from "toposort";
+import { inngest } from "@/inngest/client";
+import { getSubscriptionToken, Realtime } from "@inngest/realtime";
 
 export const SortNodes = (nodes: Node[], connections: Connection[]): Node[] => {
   if (connections.length === 0) {
@@ -29,6 +31,17 @@ export const SortNodes = (nodes: Node[], connections: Connection[]): Node[] => {
     }
     throw error;
   }
+
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
   return sortedNodeIds.map((id) => nodeMap.get(id)!).filter(Boolean);
 };
+
+export async function fetchChannelToken<
+  TChannel extends () => ReturnType<any>,
+  TTopics extends readonly string[]
+>(channel: TChannel, topics: TTopics): Promise<any> {
+  return await getSubscriptionToken(inngest, {
+    channel: channel(),
+    topics: Array.from(topics),
+  });
+}

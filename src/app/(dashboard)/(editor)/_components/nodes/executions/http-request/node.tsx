@@ -5,6 +5,9 @@ import { memo, useState } from "react";
 import { BaseExecutionNode } from "../base-execution-node";
 import { GlobeIcon } from "lucide-react";
 import { HttpRequestDialog, type HttpRequestFormValues } from "./dialog";
+import { useNodeStatus } from "@/app/(dashboard)/_hooks/use-node-status";
+import { httpRequestChannel } from "@/inngest/channels/http-request";
+import { fetchHTTPRequestToken } from "./actions";
 
 type HttpRequestNodeData = {
   variable?: string;
@@ -15,13 +18,16 @@ type HttpRequestNodeData = {
 
 type HttpRequestNodeType = Node<HttpRequestNodeData>;
 
-const nodeStatus = "loading";
-
 export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
   const nodeData = props.data;
   const [open, setOpen] = useState(false);
   const { setNodes } = useReactFlow();
-
+  const nodeStatus = useNodeStatus({
+    nodeId: props.id,
+    channel: httpRequestChannel().name,
+    topic: "status",
+    refreshToken: fetchHTTPRequestToken,
+  });
   const description = nodeData?.endpoint
     ? `${nodeData.method || "GET"} ${nodeData.endpoint}`
     : "Not Configured";

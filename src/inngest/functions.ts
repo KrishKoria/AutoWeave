@@ -10,7 +10,7 @@ export const executeWorkflow = inngest.createFunction(
     id: "executeWorkflow",
   },
   { event: "workflows/execute.workflow" },
-  async ({ event, step }) => {
+  async ({ event, step, publish }) => {
     const workflowId = event.data.workflowId;
     if (!workflowId) {
       throw new NonRetriableError("Workflow ID is missing");
@@ -36,11 +36,13 @@ export const executeWorkflow = inngest.createFunction(
           `No executor found for node type: ${node.type}`
         );
       }
+
       context = await executor({
         data: node.data as Record<string, unknown>,
         nodeId: node.id,
         context,
         step,
+        publish,
       });
     }
 

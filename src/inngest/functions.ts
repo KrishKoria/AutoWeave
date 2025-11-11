@@ -2,7 +2,7 @@ import { NonRetriableError } from "inngest";
 import { inngest } from "./client";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
-import { workflows, type NodeType } from "@/server/db/schema";
+import { workflows } from "@/server/db/schema";
 import { SortNodes } from "./utils";
 import { getNodeExecutor } from "./executor-registry";
 export const executeWorkflow = inngest.createFunction(

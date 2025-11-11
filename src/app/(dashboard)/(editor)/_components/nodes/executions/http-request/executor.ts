@@ -20,8 +20,12 @@ export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     const method = data.method || "GET";
     const endpoint = data.endpoint!;
     const options: KyOptions = { method };
+
     if (["POST", "PUT", "PATCH"].includes(method)) {
       options.body = data.body;
+      options.headers = {
+        "Content-Type": "application/json",
+      };
     }
     const response = await ky(endpoint, options);
     const contentType = response.headers.get("content-type");

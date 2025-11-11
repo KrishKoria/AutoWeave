@@ -17,7 +17,7 @@ export const executeWorkflow = inngest.createFunction(
     }
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await db.query.workflows.findFirst({
-        where: eq(workflowId, workflows.id),
+        where: eq(workflows.id, workflowId),
         with: { nodes: true, connections: true },
       });
       if (!workflow) {

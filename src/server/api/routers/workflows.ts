@@ -35,6 +35,11 @@ export const workflowsRouter = createTRPCRouter({
           connections: true,
         },
       });
+
+      if (!workflow) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       await inngest.send({
         name: "workflows/execute.workflow",
         data: {

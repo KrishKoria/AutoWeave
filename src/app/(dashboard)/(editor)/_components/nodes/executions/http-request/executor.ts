@@ -6,6 +6,7 @@ type HttpRequestData = {
   method?: "GET" | "PUT" | "POST" | "PATCH" | "DELETE";
   body?: string;
   endpoint?: string;
+  variable?: string;
 };
 export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
   data,
@@ -15,6 +16,11 @@ export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
 }) => {
   if (!data.endpoint) {
     throw new NonRetriableError("HTTPRequest Node: no endpoint available ");
+  }
+  if (!data.variable) {
+    throw new NonRetriableError(
+      "HTTPRequest Node: no variable name provided. "
+    );
   }
   const result = await step.run("HTTP Request", async () => {
     const method = data.method || "GET";
@@ -32,14 +38,25 @@ export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     const responseData = contentType?.includes("application/json")
       ? await response.json()
       : await response.text();
-    return {
-      ...context,
+
+    const responsePayload = {
       httpResponse: {
         status: response.status,
         statusText: response.statusText,
         body: responseData,
       },
     };
+    if (data.variable) {
+      return {
+        ...context,
+        [data.variable]: responsePayload,
+      };
+    }
+    return {
+      ...context,
+      ...responsePayload,
+    };
   });
+
   return result;
 };

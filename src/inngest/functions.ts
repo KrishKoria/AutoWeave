@@ -2,9 +2,9 @@ import { NonRetriableError } from "inngest";
 import { inngest } from "./client";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
-import { workflows } from "@/server/db/schema";
+import { workflows, type NodeType } from "@/server/db/schema";
 import { SortNodes } from "./utils";
-
+import { getNodeExecutor } from "./executor-registry";
 export const executeWorkflow = inngest.createFunction(
   {
     id: "executeWorkflow",
@@ -25,6 +25,26 @@ export const executeWorkflow = inngest.createFunction(
       }
       return SortNodes(workflow.nodes, workflow.connections);
     });
-    return { sortedNodes };
+    let context = event.data.initialData || {};
+    for (const node of sortedNodes) {
+      const executor = getNodeExecutor(
+        node.type as (typeof NodeType)[keyof typeof NodeType]
+      );
+      if (!executor) {
+        throw new NonRetriableError(
+          `No executor found for node type: ${node.type}`
+        );
+      }
+      context = await executor({
+        data: node.data as Record<string, unknown>,
+        nodeId: node.id,
+        context,
+        step,
+      });
+    }
+    return {
+      workflowId,
+      result: context,
+    };
   }
 );

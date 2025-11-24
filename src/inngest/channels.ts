@@ -1,29 +1,15 @@
 import { channel, topic } from "@inngest/realtime";
 import z from "zod";
 
-export const httpRequestChannel = channel("http-request").addTopic(
-  topic("status").schema(
-    z.object({
-      nodeId: z.string(),
-      status: z.enum(["loading", "success", "error"]),
-    })
-  )
-);
+const nodeStatusSchema = z.object({
+  nodeId: z.string(),
+  status: z.enum(["loading", "success", "error"]),
+});
 
-export const manualTriggerChannel = channel("manual-trigger").addTopic(
-  topic("status").schema(
-    z.object({
-      nodeId: z.string(),
-      status: z.enum(["loading", "success", "error"]),
-    })
-  )
-);
+function createNodeStatusChannel(name: string) {
+  return channel(name).addTopic(topic("status").schema(nodeStatusSchema));
+}
 
-export const googleFormChannel = channel("google-form").addTopic(
-  topic("status").schema(
-    z.object({
-      nodeId: z.string(),
-      status: z.enum(["loading", "success", "error"]),
-    })
-  )
-);
+export const httpRequestChannel = createNodeStatusChannel("http-request");
+export const manualTriggerChannel = createNodeStatusChannel("manual-trigger");
+export const googleFormChannel = createNodeStatusChannel("google-form");

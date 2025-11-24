@@ -1,5 +1,6 @@
 import { PAGINATION } from "@/config/constants";
 import { inngest } from "@/inngest/client";
+import { sendWorkflowExecution } from "@/inngest/utils";
 import {
   createTRPCRouter,
   premiumProcedure,
@@ -40,12 +41,7 @@ export const workflowsRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
-      await inngest.send({
-        name: "workflows/execute.workflow",
-        data: {
-          workflowId: input.id,
-        },
-      });
+      await sendWorkflowExecution({ workflowId: input.id });
       return workflow;
     }),
   create: premiumProcedure

@@ -1,5 +1,5 @@
 "use server";
-import { manualTriggerChannel } from "@/inngest/channels/manual-trigger";
+import { manualTriggerChannel } from "@/inngest/channels";
 import { fetchChannelToken } from "@/inngest/utils";
 import { Realtime } from "@inngest/realtime";
 

@@ -1,7 +1,7 @@
 import type { Connection, Node } from "@/server/db/schema";
 import toposort from "toposort";
 import { inngest } from "@/inngest/client";
-import { getSubscriptionToken, Realtime } from "@inngest/realtime";
+import { getSubscriptionToken } from "@inngest/realtime";
 
 export const SortNodes = (nodes: Node[], connections: Connection[]): Node[] => {
   if (connections.length === 0) {
@@ -45,3 +45,12 @@ export async function fetchChannelToken<
     topics: Array.from(topics),
   });
 }
+export const sendWorkflowExecution = async (data: {
+  workflowId: string;
+  [key: string]: any;
+}) => {
+  await inngest.send({
+    name: "workflows/execute.workflow",
+    data: data,
+  });
+};

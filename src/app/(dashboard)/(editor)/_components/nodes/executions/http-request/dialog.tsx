@@ -30,7 +30,7 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
 const formSchema = z.object({
-  endpoint: z.string().url({ message: "Please Enter a valid URL" }),
+  endpoint: z.string().min(1, { message: "Please Enter a valid URL" }),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body: z.string().optional(),
   variable: z

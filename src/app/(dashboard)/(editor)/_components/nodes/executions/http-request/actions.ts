@@ -1,5 +1,5 @@
 "use server";
-import { httpRequestChannel } from "@/inngest/channels/http-request";
+import { httpRequestChannel } from "@/inngest/channels";
 import { fetchChannelToken } from "@/inngest/utils";
 import { Realtime } from "@inngest/realtime";
 

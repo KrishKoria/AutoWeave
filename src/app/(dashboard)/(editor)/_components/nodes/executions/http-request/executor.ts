@@ -2,7 +2,7 @@ import Handlebars from "handlebars";
 import type { NodeExecutor } from "@/inngest/types";
 import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky";
-import { httpRequestChannel } from "@/inngest/channels/http-request";
+import { httpRequestChannel } from "@/inngest/channels";
 
 type HttpRequestData = {
   method: "GET" | "PUT" | "POST" | "PATCH" | "DELETE";

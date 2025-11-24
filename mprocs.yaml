@@ -3,3 +3,5 @@ procs:
     cmd: ["pnpm", "dlx", "inngest-cli@latest", "dev"]
   app:
     cmd: ["pnpm", "dev"]
+  ngrok:
+    cmd: ["pnpm", "dev:ngrok"]

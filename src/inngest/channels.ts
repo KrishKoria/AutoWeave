@@ -13,3 +13,4 @@ function createNodeStatusChannel(name: string) {
 export const httpRequestChannel = createNodeStatusChannel("http-request");
 export const manualTriggerChannel = createNodeStatusChannel("manual-trigger");
 export const googleFormChannel = createNodeStatusChannel("google-form");
+export const stripeChannel = createNodeStatusChannel("stripe");

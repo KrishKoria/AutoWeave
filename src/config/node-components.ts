@@ -2,6 +2,7 @@ import { HttpRequestNode } from "@/app/(dashboard)/(editor)/_components/nodes/ex
 import { InitialNode } from "@/app/(dashboard)/(editor)/_components/nodes/initialNode";
 import { GoogleFormNode } from "@/app/(dashboard)/(editor)/_components/nodes/triggers/google-form/node";
 import { ManualTriggerNode } from "@/app/(dashboard)/(editor)/_components/nodes/triggers/manual-trigger/node";
+import { StripeNode } from "@/app/(dashboard)/(editor)/_components/nodes/triggers/stripe/node";
 import { NodeType } from "@/server/db/schema";
 import type { NodeTypes } from "@xyflow/react";
 
@@ -10,6 +11,7 @@ export const nodeComponents = {
   [NodeType.MANUAL_TRIGGER]: ManualTriggerNode,
   [NodeType.HTTP_REQUEST]: HttpRequestNode,
   [NodeType.GOOGLE_FORM_TRIGGER]: GoogleFormNode,
+  [NodeType.STRIPE_TRIGGER]: StripeNode,
 } as const satisfies NodeTypes;
 
 export type RegisteredNodeType = keyof typeof nodeComponents;

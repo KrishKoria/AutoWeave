@@ -5,10 +5,10 @@ import ky, { type Options as KyOptions } from "ky";
 import { httpRequestChannel } from "@/inngest/channels";
 
 type HttpRequestData = {
-  method: "GET" | "PUT" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "PUT" | "POST" | "PATCH" | "DELETE";
   body?: string;
-  endpoint: string;
-  variable: string;
+  endpoint?: string;
+  variable?: string;
 };
 
 Handlebars.registerHelper("json", function (context) {
@@ -30,38 +30,38 @@ export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
       status: "loading",
     })
   );
-  if (!data.endpoint) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId: nodeId,
-        status: "error",
-      })
-    );
-    throw new NonRetriableError("HTTPRequest Node: No endpoint available ");
-  }
-
-  if (!data.variable) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId: nodeId,
-        status: "error",
-      })
-    );
-    throw new NonRetriableError(
-      "HTTPRequest Node: No variable name provided. "
-    );
-  }
-  if (!data.method) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId: nodeId,
-        status: "error",
-      })
-    );
-    throw new NonRetriableError("HTTPRequest Node: No method configured. ");
-  }
   try {
     const result = await step.run("HTTP Request", async () => {
+      if (!data.endpoint) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId: nodeId,
+            status: "error",
+          })
+        );
+        throw new NonRetriableError("HTTPRequest Node: No endpoint available ");
+      }
+
+      if (!data.variable) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId: nodeId,
+            status: "error",
+          })
+        );
+        throw new NonRetriableError(
+          "HTTPRequest Node: No variable name provided. "
+        );
+      }
+      if (!data.method) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId: nodeId,
+            status: "error",
+          })
+        );
+        throw new NonRetriableError("HTTPRequest Node: No method configured. ");
+      }
       const method = data.method;
       const endpoint = Handlebars.compile(data.endpoint)(context);
       const options: KyOptions = { method };

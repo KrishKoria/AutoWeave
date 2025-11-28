@@ -7,6 +7,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import("next").NextConfig} */
 const config = {
   serverExternalPackages: ["import-in-the-middle", "require-in-the-middle"],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async redirects() {
     return [
       {

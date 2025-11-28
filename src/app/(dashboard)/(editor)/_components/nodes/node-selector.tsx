@@ -50,6 +50,30 @@ const executionNodes: NodeTypeOption[] = [
     description: "Makes an HTTP request to a specified URL",
     icon: GlobeIcon,
   },
+  {
+    type: NodeType.GEMINI,
+    label: "Gemini",
+    description: "Generate text using Google's Gemini model",
+    icon: "/icons/gemini.svg",
+  },
+  {
+    type: NodeType.ANTHROPIC,
+    label: "Anthropic",
+    description: "Generate text using Anthropic's model",
+    icon: "/icons/anthropic.svg",
+  },
+  {
+    type: NodeType.OPENAI,
+    label: "OpenAI",
+    description: "Generate text using OpenAI's model",
+    icon: "/icons/openai.svg",
+  },
+  {
+    type: NodeType.DEEPSEEK,
+    label: "DeepSeek",
+    description: "Generate text using DeepSeek's model",
+    icon: "/icons/deepseek.svg",
+  },
 ];
 
 interface NodeSelectorProps {
@@ -181,6 +205,8 @@ export function NodeSelector({
                       src={Icon}
                       alt={node.label}
                       className="size-5 object-contain rounded-sm"
+                      width={16}
+                      height={16}
                     />
                   ) : (
                     <Icon className="size-5" />

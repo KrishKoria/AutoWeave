@@ -96,6 +96,10 @@ export const nodeTypeEnum = pgEnum("node_type", [
   "HTTP_REQUEST",
   "GOOGLE_FORM_TRIGGER",
   "STRIPE_TRIGGER",
+  "ANTHROPIC",
+  "GEMINI",
+  "DEEPSEEK",
+  "OPENAI",
 ]);
 
 // Export the enum values for use throughout the application
@@ -105,6 +109,10 @@ export const NodeType = {
   HTTP_REQUEST: "HTTP_REQUEST",
   GOOGLE_FORM_TRIGGER: "GOOGLE_FORM_TRIGGER",
   STRIPE_TRIGGER: "STRIPE_TRIGGER",
+  ANTHROPIC: "ANTHROPIC",
+  GEMINI: "GEMINI",
+  DEEPSEEK: "DEEPSEEK",
+  OPENAI: "OPENAI",
 } as const;
 
 export const nodes = pgTable("nodes", {

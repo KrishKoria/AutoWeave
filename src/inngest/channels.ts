@@ -14,3 +14,7 @@ export const httpRequestChannel = createNodeStatusChannel("http-request");
 export const manualTriggerChannel = createNodeStatusChannel("manual-trigger");
 export const googleFormChannel = createNodeStatusChannel("google-form");
 export const stripeChannel = createNodeStatusChannel("stripe");
+export const anthropicChannel = createNodeStatusChannel("anthropic");
+export const geminiChannel = createNodeStatusChannel("gemini");
+export const deepseekChannel = createNodeStatusChannel("deepseek");
+export const openAIChannel = createNodeStatusChannel("openai");

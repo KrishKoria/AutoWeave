@@ -20,6 +20,7 @@ export const env = createEnv({
     GOOGLE_GENRATIVE_AI_API_KEY: z.string(),
     DEEPSEEK_API_KEY: z.string(),
     OPENAI_API_KEY: z.string(),
+    ANTHROPIC_API_KEY: z.string(),
     SENTRY_AUTH_TOKEN: z.string(),
     POLAR_ACCESS_TOKEN: z.string(),
     POLAR_SUCCESS_URL: z.string().url(),
@@ -54,6 +55,7 @@ export const env = createEnv({
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_SUCCESS_URL: process.env.POLAR_SUCCESS_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

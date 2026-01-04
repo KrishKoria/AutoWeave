@@ -8,6 +8,8 @@ import { GeminiExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/exe
 import { AnthropicExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/executions/anthropic/executor";
 import { DeepSeekExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/executions/deepseek/executor";
 import { OpenAIExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/executions/openai/executor";
+import { DiscordExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/executions/discord/executor";
+import { SlackExecutor } from "@/app/(dashboard)/(editor)/_components/nodes/executions/slack/executor";
 
 export const executorRegistry: Record<keyof typeof NodeType, NodeExecutor> = {
   [NodeType.MANUAL_TRIGGER]: ManualTriggerExecutor,
@@ -19,6 +21,8 @@ export const executorRegistry: Record<keyof typeof NodeType, NodeExecutor> = {
   [NodeType.ANTHROPIC]: AnthropicExecutor,
   [NodeType.DEEPSEEK]: DeepSeekExecutor,
   [NodeType.OPENAI]: OpenAIExecutor,
+  [NodeType.DISCORD]: DiscordExecutor,
+  [NodeType.SLACK]: SlackExecutor,
 };
 
 export const getNodeExecutor = (type: keyof typeof NodeType): NodeExecutor => {

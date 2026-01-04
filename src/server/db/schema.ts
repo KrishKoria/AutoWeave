@@ -100,6 +100,8 @@ export const nodeTypeEnum = pgEnum("node_type", [
   "GEMINI",
   "DEEPSEEK",
   "OPENAI",
+  "DISCORD",
+  "SLACK",
 ]);
 
 // Export the enum values for use throughout the application
@@ -113,6 +115,8 @@ export const NodeType = {
   GEMINI: "GEMINI",
   DEEPSEEK: "DEEPSEEK",
   OPENAI: "OPENAI",
+  DISCORD: "DISCORD",
+  SLACK: "SLACK",
 } as const;
 
 export const nodes = pgTable("nodes", {

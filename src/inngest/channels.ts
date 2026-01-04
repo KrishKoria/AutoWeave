@@ -18,3 +18,5 @@ export const anthropicChannel = createNodeStatusChannel("anthropic");
 export const geminiChannel = createNodeStatusChannel("gemini");
 export const deepseekChannel = createNodeStatusChannel("deepseek");
 export const openAIChannel = createNodeStatusChannel("openai");
+export const discordChannel = createNodeStatusChannel("discord");
+export const slackChannel = createNodeStatusChannel("slack");
